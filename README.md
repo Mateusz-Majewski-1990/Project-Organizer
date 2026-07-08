@@ -7,6 +7,8 @@ A self-contained browser application for managing utility-planning projects (ses
 
 A core design assumption is that the entire tool lives in **one file**: open it in a browser and start working. No setup wizard, no dependencies, no companion files to copy or keep in sync. The only optional extras are two small cursor images for a cosmetic UI preference — they are not required for any project functionality.
 
+![Projekt Organizer — project list and overview](1.jpg)
+
 ---
 
 ## Purpose
@@ -125,6 +127,7 @@ No network connection is required after the file is available locally. In practi
 | File | Role |
 |------|------|
 | `project-organizer.html` | Complete application (markup, styles, logic, default configuration) |
+| `1.jpg` | Screenshot for documentation |
 | `cursor-cat-head.png`, `cursor-cat-paw.png` | Optional cursor assets |
 | `README.md` | This document |
 
