@@ -985,6 +985,72 @@
     .bearbeitung-layout .bearbeitung-notes textarea {
       flex: 1 1 auto; min-width: 0; min-height: 0; height: 100%; resize: vertical; box-sizing: border-box;
     }
+    .bearbeitung-wrap { display: flex; flex-direction: column; gap: 20px; width: 100%; }
+    .bearbeitung-powerbi-bar {
+      padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--bg); box-shadow: var(--shadow);
+    }
+    .bearbeitung-panel-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin-bottom: 8px;
+    }
+    .bearbeitung-powerbi-bar.is-section-collapsed .bearbeitung-panel-head { margin-bottom: 0; }
+    .bearbeitung-panel-head label {
+      display: block; font-size: .875rem; font-weight: 600; color: var(--text);
+      margin-bottom: 0; line-height: 1.35; flex: 1; min-width: 0;
+    }
+    .bearbeitung-panel-head .abrechnung-section-badge { flex-shrink: 0; }
+    .bearbeitung-powerbi-row { display: flex; gap: 8px; align-items: stretch; }
+    .bearbeitung-powerbi-input-wrap {
+      flex: 1; min-width: 0; display: flex; align-items: stretch;
+      border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface);
+    }
+    .bearbeitung-powerbi-input-wrap.bearbeitung-kvs-field {
+      position: relative; display: block; overflow: visible;
+    }
+    .bearbeitung-kvs-field input {
+      width: 100%; box-sizing: border-box; position: relative; z-index: 1;
+      border: none; background: transparent; padding: 8px 10px;
+      font-size: .875rem; font-family: inherit; color: var(--text);
+      line-height: 1.25;
+    }
+    .bearbeitung-kvs-ghost {
+      position: absolute; inset: 0; z-index: 0; box-sizing: border-box;
+      display: flex; align-items: center;
+      pointer-events: none; color: var(--muted); opacity: 0.45;
+      font-size: .875rem; font-family: inherit; line-height: 1.25;
+      white-space: nowrap; user-select: none; overflow: hidden;
+    }
+    .bearbeitung-kvs-field input:focus { outline: none; }
+    .bearbeitung-powerbi-input-wrap:focus-within {
+      border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-light);
+    }
+    .bearbeitung-powerbi-row .btn { flex-shrink: 0; white-space: nowrap; }
+    .bearbeitung-automail-row {
+      display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap;
+    }
+    .bearbeitung-automail-buttons {
+      flex: 1; min-width: 160px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    }
+    .bearbeitung-automail-chip {
+      display: inline-flex; align-items: center; gap: 2px; max-width: 100%;
+    }
+    .bearbeitung-automail-chip .automail-open-btn { max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+    .btn-automail-edit {
+      width: 28px; min-width: 28px; height: 28px; padding: 0; font-size: .8rem; line-height: 1;
+    }
+    .automail-form-field { margin-bottom: 14px; }
+    .automail-form-field:last-child { margin-bottom: 0; }
+    .automail-form-field label {
+      display: block; font-size: .8rem; font-weight: 500; color: var(--muted); margin-bottom: 4px;
+    }
+    .automail-form-field textarea { min-height: 140px; resize: vertical; }
+    .bearbeitung-automail-hint {
+      margin: -4px 0 10px; font-size: .78rem; color: var(--muted); line-height: 1.45;
+    }
+    .automail-editor-hint {
+      margin: 0 0 14px; font-size: .8rem; color: var(--muted); line-height: 1.45;
+    }
 
     .abrechnung-head-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     .abrechnung-section-head-main {
@@ -1382,7 +1448,7 @@
         <div class="data-io-bar">
           <button class="btn" id="btn-import-json">Wczytaj projektów</button>
           <button class="btn btn-success" id="btn-export-all">Eksportuj projekty</button>
-          <button class="btn" id="btn-open-team">Podgląd zespołu</button>
+          <button class="btn hidden" id="btn-open-team">Podgląd zespołu</button>
           <input type="file" id="import-file" accept=".json" multiple class="hidden">
         </div>
         <div class="project-sort-wrap">
@@ -1595,11 +1661,41 @@
 
     <!-- Bearbeitung -->
     <div class="section-panel hidden" data-section="bearbeitung" id="panel-bearbeitung">
-      <div class="bearbeitung-layout">
-        <div id="checklist-bearbeitung" class="checklist bearbeitung-checklist"></div>
-        <div class="notes-block bearbeitung-notes">
-          <label for="bearbeitung-notes" id="label-bearbeitung-notes">Notatki</label>
-          <textarea id="bearbeitung-notes" rows="1" placeholder=""></textarea>
+      <div class="bearbeitung-wrap">
+        <div class="bearbeitung-powerbi-bar bearbeitung-kvs-block">
+          <div class="bearbeitung-panel-head">
+            <label for="bearbeitung-kvs-ust" id="bearbeitung-kvs-title">Generowanie odnośnika UST / KVS do KUB</label>
+            <button type="button" class="abrechnung-section-badge is-expanded" id="bearbeitung-kvs-badge">Zwiń</button>
+          </div>
+          <div id="bearbeitung-kvs-body">
+            <div class="bearbeitung-powerbi-row">
+              <div class="bearbeitung-powerbi-input-wrap bearbeitung-kvs-field">
+                <span class="bearbeitung-kvs-ghost" id="bearbeitung-kvs-ghost" aria-hidden="true"></span>
+                <input type="text" id="bearbeitung-kvs-ust" autocomplete="off" spellcheck="false">
+              </div>
+              <button type="button" class="btn btn-primary" id="btn-bearbeitung-powerbi-copy">Generuj link i kopiuj</button>
+            </div>
+          </div>
+        </div>
+        <div class="bearbeitung-powerbi-bar bearbeitung-automail-bar bearbeitung-automail-block">
+          <div class="bearbeitung-panel-head">
+            <label id="bearbeitung-automail-title">Predefiniowane szablony e-mail</label>
+            <button type="button" class="abrechnung-section-badge is-expanded" id="bearbeitung-automail-badge">Zwiń</button>
+          </div>
+          <div id="bearbeitung-automail-body">
+            <p class="bearbeitung-automail-hint" id="bearbeitung-automail-hint"></p>
+            <div class="bearbeitung-automail-row">
+              <div class="bearbeitung-automail-buttons" id="bearbeitung-automail-buttons"></div>
+              <button type="button" class="btn btn-primary" id="btn-add-automail">Dodaj szablon e-mail</button>
+            </div>
+          </div>
+        </div>
+        <div class="bearbeitung-layout">
+          <div id="checklist-bearbeitung" class="checklist bearbeitung-checklist"></div>
+          <div class="notes-block bearbeitung-notes">
+            <label for="bearbeitung-notes" id="label-bearbeitung-notes">Notatki</label>
+            <textarea id="bearbeitung-notes" rows="1" placeholder=""></textarea>
+          </div>
         </div>
       </div>
     </div>
@@ -1756,6 +1852,52 @@
   </div>
 </div>
 
+<div id="automail-name-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="automail-name-title">
+  <div class="settings-modal confirm-modal">
+    <div class="modal-header">
+      <h2 id="automail-name-title">Nowy szablon e-mail</h2>
+      <button type="button" class="btn btn-ghost btn-icon" id="btn-automail-name-close" title="Zamknij">✕</button>
+    </div>
+    <div class="modal-body">
+      <label for="automail-name-input" id="label-automail-name">Skrót / nazwa szablonu</label>
+      <input type="text" id="automail-name-input" placeholder="np. MS SAP/ZNL" autocomplete="off">
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" id="btn-automail-name-cancel">Anuluj</button>
+      <button type="button" class="btn btn-primary" id="btn-automail-name-next">Dalej</button>
+    </div>
+  </div>
+</div>
+
+<div id="automail-editor-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="automail-editor-title">
+  <div class="settings-modal team-detail-modal">
+    <div class="modal-header">
+      <h2 id="automail-editor-title">Szablon e-mail</h2>
+      <button type="button" class="btn btn-ghost btn-icon" id="btn-automail-editor-close" title="Zamknij">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="automail-editor-hint" id="automail-editor-hint"></p>
+      <div class="automail-form-field">
+        <label for="automail-editor-to" id="label-automail-to">Adresat (Do)</label>
+        <input type="text" id="automail-editor-to" placeholder="np. jan.kowalski@example.com" autocomplete="off">
+      </div>
+      <div class="automail-form-field">
+        <label for="automail-editor-subject" id="label-automail-subject">Tytuł</label>
+        <input type="text" id="automail-editor-subject" autocomplete="off">
+      </div>
+      <div class="automail-form-field">
+        <label for="automail-editor-body" id="label-automail-body">Treść</label>
+        <textarea id="automail-editor-body" rows="8"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-danger hidden" id="btn-automail-delete">Usuń szablon</button>
+      <button type="button" class="btn btn-ghost" id="btn-automail-editor-cancel">Anuluj</button>
+      <button type="button" class="btn btn-primary" id="btn-automail-save">Zapisz</button>
+    </div>
+  </div>
+</div>
+
 <div id="import-overwrite-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="import-overwrite-title">
   <div class="settings-modal confirm-modal">
     <div class="modal-header">
@@ -1783,12 +1925,17 @@ window.PM_I18N = {
       back: "Projekty", prevPage: "Poprzednia", nextPage: "Następna",
       copyReport: "Kopiuj Raport Godzinowy", copySummary: "Kopiuj Podsumowanie Godzin",
       copyAufmass: "Kopiuj Aufmaß L25",
+      copyPowerBiLink: "Generuj link i kopiuj",
+      addAutomail: "Dodaj szablon e-mail",
       openStunden: "Rozwiń raport godzinowy", closeStunden: "Zwiń raport godzinowy",
       openRates: "Rozwiń kalkulację kosztów", closeRates: "Zwiń kalkulację kosztów",
+      openKvsPanel: "Rozwiń generowanie odnośnika UST / KVS do KUB", closeKvsPanel: "Zwiń generowanie odnośnika UST / KVS do KUB",
+      openAutomailPanel: "Rozwiń predefiniowane szablony e-mail", closeAutomailPanel: "Zwiń predefiniowane szablony e-mail",
       addRow: "Nowy wiersz", sortDate: "Sortuj po dacie",
       renameProject: "Zmień nazwę", renameBearbeiter: "Zmień Bearbeitera",
       addBaustelle: "+ Baustelle",
       settingsSave: "Zapisz", settingsCancel: "Anuluj", addPosition: "Dodaj pozycję",
+      deleteAutomail: "Usuń szablon",
       exportSettings: "Eksportuj ustawienia", importSettings: "Wczytaj ustawienia",
       importOverwrite: "Nadpisz", importSkipExisting: "Tylko nowe",
       openTeam: "Podgląd zespołu", teamBack: "Moje projekty",
@@ -1813,7 +1960,13 @@ window.PM_I18N = {
       stundenReport: "Raport godzinowy", ratesPanel: "Kalkulacja kosztów",
       sectionCollapsed: "Rozwiń", sectionExpanded: "Zwiń",
       formulaParts: "Wartości:",
-      bearbeitungNotes: "Notatki", korrekturNotes: "Notatki", costSummary: "Podsumowanie kosztów", costTotal: "Razem",
+      bearbeitungNotes: "Notatki", korrekturNotes: "Notatki",
+      bearbeitungKvsUst: "Generowanie odnośnika UST / KVS do KUB",
+      bearbeitungAutomail: "Predefiniowane szablony e-mail",
+      bearbeitungAutomailHint: "Zapisz kopię (backup), eksportując ustawienia! Lub wczytaj, importując ustawienia.",
+      automailTo: "Adresat (Do)", automailSubject: "Tytuł", automailBody: "Treść",
+      automailName: "Skrót / nazwa szablonu",
+      costSummary: "Podsumowanie kosztów", costTotal: "Razem",
       costColLabel: "Pozycja", costColQty: "Ilość", costColRate: "Stawka €", costColResult: "Wynik €",
     },
     hint: { sparteAuto: "Oblicza się automatycznie z długości kabli poniżej", billingFormula: "Pola liczbowe: wpisz = i wyrażenie (np. =100+50-20). Po wyjściu z pola widać wynik; kliknij ponownie, by edytować formułę - jest ona zapisywana w projekcie i w eksportowanym pliku z danymi." },
@@ -1859,7 +2012,7 @@ window.PM_I18N = {
     },
     empty: { noProjects: "Brak zapisanych projektów.", noRows: "Brak wierszy. Kliknij „+ Nowy wiersz”." },
     select: { choosePos: "- wybierz -", chooseDesc: "- wybierz opis -", customDesc: "- własny opis -" },
-    title: { theme: "Motyw kolorystyczny", lang: "Język", cursor: "Kursor przycisków", deleteProject: "Usuń projekt", drag: "Przeciągnij, aby zmienić kolejność", copyHoursSummary: "Kopiuj podsumowanie", rename: "Zmień nazwę projektu", renameBearbeiter: "Zmień Bearbeitera", pickDate: "Wybierz datę", collapseProjectBar: "Zwiń panel projektu", expandProjectBar: "Rozwiń panel projektu", teamView: "Podgląd projektu (tylko odczyt)", teamDetailClose: "Zamknij" },
+    title: { theme: "Motyw kolorystyczny", lang: "Język", cursor: "Kursor przycisków", deleteProject: "Usuń projekt", drag: "Przeciągnij, aby zmienić kolejność", copyHoursSummary: "Kopiuj podsumowanie", rename: "Zmień nazwę projektu", renameBearbeiter: "Zmień Bearbeitera", pickDate: "Wybierz datę", collapseProjectBar: "Zwiń panel projektu", expandProjectBar: "Rozwiń panel projektu", teamView: "Podgląd projektu (tylko odczyt)", teamDetailClose: "Zamknij", editAutomail: "Edytuj szablon", closeModal: "Zamknij" },
     status: { loaded: "Wczytano", saved: "Zapisano" },
     projectMeta: "ostatnia zmiana: {date}",
     projectAge: "wiek: {age}",
@@ -1871,7 +2024,17 @@ window.PM_I18N = {
       noRowsCopy: "Brak wierszy do skopiowania", copied: "Skopiowano {n} wiersz(y)",
       copiedHoursSummary: "Skopiowano podsumowanie godzin", noHoursSummary: "Brak podsumowania",
       copiedAufmass: "Skopiowano Aufmaß L25",
-      noAufmass: "Brak danych do skopiowania", sorted: "Posortowano wiersze po dacie",
+      noAufmass: "Brak danych do skopiowania",
+      copiedPowerBiLink: "Skopiowano link Power BI",
+      noKvsUst: "Podaj nazwę UST lub KVS",
+      automailSaved: "Zapisano szablon e-mail",
+      automailDeleted: "Usunięto szablon e-mail",
+      automailNoName: "Podaj nazwę / skrót szablonu",
+      automailNoTo: "Podaj adresata e-mail",
+      automailDuplicateName: "Szablon o tej nazwie już istnieje",
+      automailOpened: "Otwarto nowy e-mail",
+      automailOpenedPasteBody: "Otwarto e-mail (adresat i temat). Treść w schowku — wklej Ctrl+V nad stopką.",
+      sorted: "Posortowano wiersze po dacie",
       formulaInvalid: "Nieprawidłowa formuła",
       dateInvalid: "Nieprawidłowa data - wpisz DD.MM.RRRR lub DDMMRRRR",
       copyBasicPlaceholder: "Funkcja w przygotowaniu",
@@ -1900,13 +2063,20 @@ window.PM_I18N = {
       importOverwriteTitle: "Import projektów",
       importOverwriteBody: "W pliku są projekty, które już masz na liście:\n{names}",
       importOverwriteLegend: "Anuluj - całkowicie przerywa import, nic się nie zmienia.\nTylko nowe - wczytuje projekty, których jeszcze nie masz; istniejące zostają bez zmian.\nNadpisz - pełny import z pliku: nadpisuje istniejące i dodaje nowe.",
+      automailDelete: "Usunąć szablon \"{name}\"?",
     },
     prompt: {
       renameProject: "Nowa nazwa projektu:", renameBearbeiter: "Nowy Bearbeitera:",
       renameBaustelle: "Etykieta Baustelle (opcjonalnie, puste = Ortschaft/Projektordner):",
       newBaustelleLabel: "Etykieta nowej Baustelle (opcjonalnie):",
     },
-    placeholder: { projectName: "np. BF_SCWAN_4000025287_WOL_20631-3" },
+    placeholder: { projectName: "np. BF_SCWAN_4000025287_WOL_20631-3", kvsUst: "E-KVS-000-001", automailName: "np. MS SAP/ZNL" },
+    automail: {
+      newTitle: "Nowy szablon e-mail",
+      editTitle: "Edytuj szablon: {name}",
+      editorHint: "Kliknięcie skrótu otwiera nowy e-mail z adresem i tematem. Treść trafia do schowka — wklej ją (Ctrl+V) nad stopką Outlooka. Dzięki temu stopka nie znika (ograniczenie mailto: w Outlooku).",
+      next: "Dalej",
+    },
   },
   de: {
     theme: { white: "Weiß", gray: "Grau", black: "Schwarz", pink: "Rosa-Blau", aqua: "Blau-Grün", gold: "Gold aber dezent" },
@@ -1916,12 +2086,17 @@ window.PM_I18N = {
       back: "Projekte", prevPage: "Zurück", nextPage: "Weiter",
       copyReport: "Stundenbericht kopieren", copySummary: "Stundenübersicht kopieren",
       copyAufmass: "Aufmaß L25 kopieren",
+      copyPowerBiLink: "Link erzeugen und kopieren",
+      addAutomail: "E-Mail-Vorlage hinzufügen",
       openStunden: "Stundennachweis aufklappen", closeStunden: "Stundennachweis zuklappen",
       openRates: "Kostenkalkulation aufklappen", closeRates: "Kostenkalkulation zuklappen",
+      openKvsPanel: "UST / KVS-Link zu KUB aufklappen", closeKvsPanel: "UST / KVS-Link zu KUB zuklappen",
+      openAutomailPanel: "Vordefinierte E-Mail-Vorlagen aufklappen", closeAutomailPanel: "Vordefinierte E-Mail-Vorlagen zuklappen",
       addRow: "Neue Zeile", sortDate: "Nach Datum sortieren",
       renameProject: "Name ändern", renameBearbeiter: "Bearbeiter ändern",
       addBaustelle: "+ Baustelle",
       settingsSave: "Speichern", settingsCancel: "Abbrechen", addPosition: "Position hinzufügen",
+      deleteAutomail: "Vorlage löschen",
       exportSettings: "Einstellungen exportieren", importSettings: "Einstellungen laden",
       importOverwrite: "Überschreiben", importSkipExisting: "Nur neue",
       openTeam: "Team-Übersicht", teamBack: "Meine Projekte",
@@ -1946,7 +2121,13 @@ window.PM_I18N = {
       stundenReport: "Stundennachweis", ratesPanel: "Kostenkalkulation",
       sectionCollapsed: "Eingeklappt", sectionExpanded: "Ausgeklappt",
       formulaParts: "Teile:",
-      bearbeitungNotes: "Notizen", korrekturNotes: "Notizen", costSummary: "Kostenübersicht", costTotal: "Gesamt",
+      bearbeitungNotes: "Notizen", korrekturNotes: "Notizen",
+      bearbeitungKvsUst: "UST / KVS-Link zu KUB generieren",
+      bearbeitungAutomail: "Vordefinierte E-Mail-Vorlagen",
+      bearbeitungAutomailHint: "Speichern (backup) durch Export der Einstellungen! Oder laden durch Import der Einstellungen.",
+      automailTo: "Empfänger (An)", automailSubject: "Betreff", automailBody: "Inhalt",
+      automailName: "Kurzname / Bezeichnung",
+      costSummary: "Kostenübersicht", costTotal: "Gesamt",
       costColLabel: "Position", costColQty: "Menge", costColRate: "Satz €", costColResult: "Ergebnis €",
     },
     hint: { sparteAuto: "Wird automatisch aus den Kabellängen unten berechnet", billingFormula: "Zahlenfelder: = und Ausdruck eingeben (z. B. =100+50-20). Nach Verlassen des Feldes erscheint das Ergebnis; erneut klicken zum Bearbeiten - die Formel wird im Projekt und JSON-Export gespeichert." },
@@ -1992,7 +2173,7 @@ window.PM_I18N = {
     },
     empty: { noProjects: "Keine gespeicherten Projekte.", noRows: "Keine Zeilen. Klicken Sie auf „+ Neue Zeile”." },
     select: { choosePos: "- auswählen -", chooseDesc: "- Beschreibung wählen -", customDesc: "- Eigene Beschreibung -" },
-    title: { theme: "Farbschema", lang: "Sprache", cursor: "Button-Cursor", deleteProject: "Projekt löschen", drag: "Ziehen zum Sortieren", copyHoursSummary: "Übersicht kopieren", rename: "Projektname ändern", renameBearbeiter: "Bearbeiter ändern", pickDate: "Datum wählen", collapseProjectBar: "Projektleiste einklappen", expandProjectBar: "Projektleiste ausklappen", teamView: "Projektansicht (nur Lesen)", teamDetailClose: "Schließen" },
+    title: { theme: "Farbschema", lang: "Sprache", cursor: "Button-Cursor", deleteProject: "Projekt löschen", drag: "Ziehen zum Sortieren", copyHoursSummary: "Übersicht kopieren", rename: "Projektname ändern", renameBearbeiter: "Bearbeiter ändern", pickDate: "Datum wählen", collapseProjectBar: "Projektleiste einklappen", expandProjectBar: "Projektleiste ausklappen", teamView: "Projektansicht (nur Lesen)", teamDetailClose: "Schließen", editAutomail: "Vorlage bearbeiten", closeModal: "Schließen" },
     status: { loaded: "Geladen", saved: "Gespeichert" },
     projectMeta: "letzte Änderung: {date}",
     projectAge: "Alter: {age}",
@@ -2004,7 +2185,17 @@ window.PM_I18N = {
       noRowsCopy: "Keine Zeilen", copied: "{n} Zeile(n) kopiert",
       copiedHoursSummary: "Stundenübersicht kopiert", noHoursSummary: "Keine Übersicht",
       copiedAufmass: "Aufmaß L25 kopiert",
-      noAufmass: "Keine Daten zum Kopieren", sorted: "Nach Datum sortiert",
+      noAufmass: "Keine Daten zum Kopieren",
+      copiedPowerBiLink: "Power-BI-Link kopiert",
+      noKvsUst: "UST- oder KVS-Bezeichnung eingeben",
+      automailSaved: "E-Mail-Vorlage gespeichert",
+      automailDeleted: "E-Mail-Vorlage gelöscht",
+      automailNoName: "Kurzname der Vorlage eingeben",
+      automailNoTo: "E-Mail-Empfänger eingeben",
+      automailDuplicateName: "Eine Vorlage mit diesem Namen existiert bereits",
+      automailOpened: "Neue E-Mail geöffnet",
+      automailOpenedPasteBody: "E-Mail geöffnet (Empfänger und Betreff). Text in der Zwischenablage — über der Signatur einfügen (Strg+V).",
+      sorted: "Nach Datum sortiert",
       formulaInvalid: "Ungültige Formel - z. B. =100+50-20",
       dateInvalid: "Ungültiges Datum - DD.MM.JJJJ oder DDMMJJJJ",
       copyBasicPlaceholder: "Funktion in Vorbereitung",
@@ -2033,13 +2224,20 @@ window.PM_I18N = {
       importOverwriteTitle: "Projektimport",
       importOverwriteBody: "Die Datei enthält Projekte, die bereits in der Liste sind:\n{names}",
       importOverwriteLegend: "Abbrechen - bricht den Import ab, nichts wird geändert.\nNur neue - lädt nur neue Projekte; vorhandene bleiben unverändert.\nÜberschreiben - voller Import: vorhandene ersetzen und neue hinzufügen.",
+      automailDelete: "Vorlage \"{name}\" löschen?",
     },
     prompt: {
       renameProject: "Neuer Projektname:", renameBearbeiter: "Neuer Bearbeiter:",
       renameBaustelle: "Baustelle-Bezeichnung (optional, leer = Ortschaft/Projektordner):",
       newBaustelleLabel: "Bezeichnung der neuen Baustelle (optional):",
     },
-    placeholder: { projectName: "z.B. BF_SCWAN_4000025287_WOL_20631-3" },
+    placeholder: { projectName: "z.B. BF_SCWAN_4000025287_WOL_20631-3", kvsUst: "E-KVS-000-001", automailName: "z.B. MS SAP/ZNL" },
+    automail: {
+      newTitle: "Neue E-Mail-Vorlage",
+      editTitle: "Vorlage bearbeiten: {name}",
+      editorHint: "Ein Klick öffnet eine neue E-Mail mit Empfänger und Betreff. Der Text liegt in der Zwischenablage — über der Outlook-Signatur einfügen (Strg+V), damit die Signatur erhalten bleibt.",
+      next: "Weiter",
+    },
   },
 };
 </script>
@@ -2051,6 +2249,7 @@ window.PM_I18N = {
 
 window.PM_DEFAULT_CONFIG = {
   defaultBearbeiter: "MAJEWSM",
+  automailTemplates: [],
 
   positions: [
     { id: "pos_t61", code: "T 6.1", title: "komplexe Netzknoten" },
@@ -2255,6 +2454,8 @@ window.STUNDEN_CONFIG = window.PM_DEFAULT_CONFIG;
   let activeSection = "glowne";
   let stundenEditorOpen = true;
   let costPanelOpen = true;
+  let bearbeitungKvsPanelOpen = true;
+  let bearbeitungAutomailPanelOpen = true;
   let projectBarExpanded = true;
   let dragSrcIndex = null;
   let sparteManualOverride = false;
@@ -2285,7 +2486,26 @@ window.STUNDEN_CONFIG = window.PM_DEFAULT_CONFIG;
         title: p.title || "",
       })),
       descriptions: JSON.parse(JSON.stringify(cfg.descriptions || {})),
+      automailTemplates: migrateAutomailTemplates(cfg.automailTemplates),
     };
+  }
+
+  function migrateAutomailTemplate(raw) {
+    if (!raw || typeof raw !== "object") return null;
+    const label = String(raw.label || "").trim();
+    if (!label) return null;
+    return {
+      id: raw.id || uid(),
+      label,
+      to: String(raw.to || "").trim(),
+      subject: String(raw.subject || ""),
+      body: String(raw.body || ""),
+    };
+  }
+
+  function migrateAutomailTemplates(list) {
+    if (!Array.isArray(list)) return [];
+    return list.map(migrateAutomailTemplate).filter(Boolean);
   }
 
   function getFactoryDefaultConfig() {
@@ -2333,6 +2553,7 @@ window.STUNDEN_CONFIG = window.PM_DEFAULT_CONFIG;
       defaultBearbeiter: raw?.defaultBearbeiter || factory.defaultBearbeiter || "MAJEWSM",
       positions,
       descriptions,
+      automailTemplates: migrateAutomailTemplates(raw?.automailTemplates),
     };
   }
 
@@ -2416,6 +2637,323 @@ window.STUNDEN_CONFIG = window.PM_DEFAULT_CONFIG;
       document.execCommand("copy");
       document.body.removeChild(ta);
     }
+  }
+
+  const POWER_BI_REPORT_URL =
+    "https://app.powerbi.com/groups/me/apps/bb67ebce-a19e-4caa-b59c-2923f040479a/reports/48b1cd1a-0aa8-4c9d-a3c1-fabd06f540fd/61ace7864d0a82cd4d48";
+
+  function extractLocationPrefixFromProjectName(projectName) {
+    if (!projectName) return "";
+    const parts = String(projectName).trim().split("_");
+    if (parts.length >= 2 && parts[0].toUpperCase() === "BF" && parts[1]) {
+      return parts[1].toUpperCase() + "-";
+    }
+    return "";
+  }
+
+  function buildPowerBiKvsLink(assetTp) {
+    const safe = String(assetTp).replace(/'/g, "''");
+    return POWER_BI_REPORT_URL + "?filter=kub_asset/TP+eq+'" + safe + "'";
+  }
+
+  let bearbeitungKvsOwnerProjectId = null;
+  let bearbeitungKvsInitialPrefix = "";
+
+  function shouldShowKvsGhost(value) {
+    const v = String(value);
+    if (!v) return true;
+    if (!bearbeitungKvsInitialPrefix) return false;
+    return v === bearbeitungKvsInitialPrefix;
+  }
+
+  function measureKvsTextWidth(text, input) {
+    const style = getComputedStyle(input);
+    if (!measureKvsTextWidth._canvas) {
+      measureKvsTextWidth._canvas = document.createElement("canvas");
+    }
+    const ctx = measureKvsTextWidth._canvas.getContext("2d");
+    ctx.font = style.font;
+    return ctx.measureText(text).width;
+  }
+
+  function syncKvsGhostTypography(input, ghost) {
+    const style = getComputedStyle(input);
+    ghost.style.font = style.font;
+    ghost.style.letterSpacing = style.letterSpacing;
+    ghost.style.lineHeight = style.lineHeight;
+  }
+
+  function updateBearbeitungKvsGhost() {
+    const input = document.getElementById("bearbeitung-kvs-ust");
+    const ghost = document.getElementById("bearbeitung-kvs-ghost");
+    if (!input || !ghost) return;
+    ghost.textContent = tr("placeholder.kvsUst");
+    const show = shouldShowKvsGhost(input.value);
+    ghost.hidden = !show;
+    ghost.style.display = show ? "flex" : "none";
+    if (!show) return;
+    syncKvsGhostTypography(input, ghost);
+    const style = getComputedStyle(input);
+    const padL = parseFloat(style.paddingLeft) || 0;
+    const textWidth = measureKvsTextWidth(input.value, input);
+    ghost.style.paddingTop = style.paddingTop;
+    ghost.style.paddingBottom = style.paddingBottom;
+    ghost.style.paddingRight = style.paddingRight;
+    ghost.style.paddingLeft = Math.ceil(padL + textWidth) + "px";
+  }
+
+  function scheduleBearbeitungKvsGhostUpdate() {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(updateBearbeitungKvsGhost);
+    });
+  }
+
+  function bindBearbeitungKvsInput() {
+    const input = document.getElementById("bearbeitung-kvs-ust");
+    if (!input || input._kvsBound) return;
+    input._kvsBound = true;
+    input.addEventListener("input", updateBearbeitungKvsGhost);
+    input.addEventListener("focus", updateBearbeitungKvsGhost);
+    input.addEventListener("keyup", updateBearbeitungKvsGhost);
+  }
+
+  function renderBearbeitungKvsField(p) {
+    const input = document.getElementById("bearbeitung-kvs-ust");
+    if (!input || !p) return;
+    bindBearbeitungKvsInput();
+    if (bearbeitungKvsOwnerProjectId !== p.id) {
+      bearbeitungKvsInitialPrefix = extractLocationPrefixFromProjectName(p.name);
+      input.value = bearbeitungKvsInitialPrefix;
+      bearbeitungKvsOwnerProjectId = p.id;
+    }
+    scheduleBearbeitungKvsGhostUpdate();
+  }
+
+  async function copyBearbeitungPowerBiLink() {
+    const input = document.getElementById("bearbeitung-kvs-ust");
+    if (!input) return;
+    const assetTp = input.value.trim();
+    if (!assetTp || assetTp === bearbeitungKvsInitialPrefix) {
+      showToast(tr("toast.noKvsUst"));
+      input.focus();
+      return;
+    }
+    await copyTextToClipboard(buildPowerBiKvsLink(assetTp));
+    showToast(tr("toast.copiedPowerBiLink"));
+  }
+
+  let automailEditorDraft = null;
+
+  function getAutomailTemplates() {
+    return migrateAutomailTemplates(appConfig?.automailTemplates);
+  }
+
+  function setAutomailTemplates(templates) {
+    if (!appConfig) appConfig = getFactoryDefaultConfig();
+    appConfig.automailTemplates = migrateAutomailTemplates(templates);
+    saveState();
+    renderAutomailPanel();
+  }
+
+  function findAutomailTemplate(id) {
+    return getAutomailTemplates().find(t => t.id === id) || null;
+  }
+
+  function buildMailtoUrl(template) {
+    const to = (template.to || "").trim();
+    const toPart = to.split(/[;,]/).map(s => s.trim()).filter(Boolean).join(",");
+    const params = [];
+    if (template.subject) params.push("subject=" + encodeURIComponent(template.subject));
+    return "mailto:" + toPart + (params.length ? "?" + params.join("&") : "");
+  }
+
+  async function openAutomailMail(template) {
+    if (!template) return;
+    if (!(template.to || "").trim()) {
+      showToast(tr("toast.automailNoTo"));
+      openAutomailEditorModal(template, false);
+      return;
+    }
+    const body = (template.body || "").trim();
+    if (body) {
+      await copyTextToClipboard(body);
+    }
+    window.location.href = buildMailtoUrl(template);
+    showToast(body ? tr("toast.automailOpenedPasteBody") : tr("toast.automailOpened"), "success");
+  }
+
+  function applyAutomailModalLabels() {
+    const map = {
+      "bearbeitung-automail-title": "label.bearbeitungAutomail",
+      "label-automail-name": "label.automailName",
+      "label-automail-to": "label.automailTo",
+      "label-automail-subject": "label.automailSubject",
+      "label-automail-body": "label.automailBody",
+    };
+    Object.entries(map).forEach(([id, key]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = tr(key);
+    });
+    const panelHint = document.getElementById("bearbeitung-automail-hint");
+    if (panelHint) panelHint.textContent = tr("label.bearbeitungAutomailHint");
+    const namePh = document.getElementById("automail-name-input");
+    if (namePh) namePh.placeholder = tr("placeholder.automailName");
+    const hint = document.getElementById("automail-editor-hint");
+    if (hint) hint.textContent = tr("automail.editorHint");
+    const delBtn = document.getElementById("btn-automail-delete");
+    if (delBtn) delBtn.textContent = tr("btn.deleteAutomail");
+    const saveBtn = document.getElementById("btn-automail-save");
+    if (saveBtn) saveBtn.textContent = tr("btn.settingsSave");
+    const cancelName = document.getElementById("btn-automail-name-cancel");
+    if (cancelName) cancelName.textContent = tr("btn.settingsCancel");
+    const cancelEditor = document.getElementById("btn-automail-editor-cancel");
+    if (cancelEditor) cancelEditor.textContent = tr("btn.settingsCancel");
+    const nextBtn = document.getElementById("btn-automail-name-next");
+    if (nextBtn) nextBtn.textContent = tr("automail.next");
+    const closeName = document.getElementById("btn-automail-name-close");
+    if (closeName) closeName.title = tr("title.closeModal");
+    const closeEditor = document.getElementById("btn-automail-editor-close");
+    if (closeEditor) closeEditor.title = tr("title.closeModal");
+  }
+
+  function renderAutomailPanel() {
+    const wrap = document.getElementById("bearbeitung-automail-buttons");
+    if (!wrap) return;
+    wrap.innerHTML = "";
+    getAutomailTemplates().forEach(tpl => {
+      const chip = document.createElement("div");
+      chip.className = "bearbeitung-automail-chip";
+      const openBtn = document.createElement("button");
+      openBtn.type = "button";
+      openBtn.className = "btn-badge-style automail-open-btn";
+      openBtn.textContent = tpl.label;
+      openBtn.title = tpl.label;
+      openBtn.addEventListener("click", () => openAutomailMail(tpl));
+      const editBtn = document.createElement("button");
+      editBtn.type = "button";
+      editBtn.className = "btn btn-ghost btn-icon btn-automail-edit";
+      editBtn.textContent = "\u270E";
+      editBtn.title = tr("title.editAutomail");
+      editBtn.addEventListener("click", e => {
+        e.stopPropagation();
+        openAutomailEditorModal(tpl, false);
+      });
+      chip.appendChild(openBtn);
+      chip.appendChild(editBtn);
+      wrap.appendChild(chip);
+    });
+  }
+
+  function closeAutomailNameModal() {
+    document.getElementById("automail-name-overlay")?.classList.add("hidden");
+    const input = document.getElementById("automail-name-input");
+    if (input) input.value = "";
+  }
+
+  function closeAutomailEditorModal() {
+    document.getElementById("automail-editor-overlay")?.classList.add("hidden");
+    automailEditorDraft = null;
+  }
+
+  function openAutomailNameModal() {
+    applyAutomailModalLabels();
+    const title = document.getElementById("automail-name-title");
+    if (title) title.textContent = tr("automail.newTitle");
+    const input = document.getElementById("automail-name-input");
+    if (input) {
+      input.value = "";
+      input.focus();
+    }
+    document.getElementById("automail-name-overlay")?.classList.remove("hidden");
+  }
+
+  function confirmAutomailNameModal() {
+    const input = document.getElementById("automail-name-input");
+    const label = (input?.value || "").trim();
+    if (!label) {
+      showToast(tr("toast.automailNoName"));
+      input?.focus();
+      return;
+    }
+    const exists = getAutomailTemplates().some(t => t.label.toLowerCase() === label.toLowerCase());
+    if (exists) {
+      showToast(tr("toast.automailDuplicateName"));
+      input?.focus();
+      return;
+    }
+    closeAutomailNameModal();
+    openAutomailEditorModal({ id: uid(), label, to: "", subject: "", body: "" }, true);
+  }
+
+  function openAutomailEditorModal(template, isNew) {
+    automailEditorDraft = {
+      id: template.id,
+      label: template.label,
+      isNew: !!isNew,
+      originalLabel: template.label,
+    };
+    applyAutomailModalLabels();
+    const title = document.getElementById("automail-editor-title");
+    if (title) {
+      title.textContent = isNew
+        ? tr("automail.newTitle")
+        : tr("automail.editTitle", { name: template.label });
+    }
+    const toEl = document.getElementById("automail-editor-to");
+    const subEl = document.getElementById("automail-editor-subject");
+    const bodyEl = document.getElementById("automail-editor-body");
+    if (toEl) toEl.value = template.to || "";
+    if (subEl) subEl.value = template.subject || "";
+    if (bodyEl) bodyEl.value = template.body || "";
+    const delBtn = document.getElementById("btn-automail-delete");
+    if (delBtn) delBtn.classList.toggle("hidden", !!isNew);
+    document.getElementById("automail-editor-overlay")?.classList.remove("hidden");
+    (toEl || subEl)?.focus();
+  }
+
+  function saveAutomailEditorModal() {
+    if (!automailEditorDraft) return;
+    const to = document.getElementById("automail-editor-to")?.value.trim() || "";
+    const subject = document.getElementById("automail-editor-subject")?.value || "";
+    const body = document.getElementById("automail-editor-body")?.value || "";
+    if (!to) {
+      showToast(tr("toast.automailNoTo"));
+      document.getElementById("automail-editor-to")?.focus();
+      return;
+    }
+    const label = automailEditorDraft.label.trim();
+    const duplicate = getAutomailTemplates().some(t => {
+      if (t.id === automailEditorDraft.id) return false;
+      return t.label.toLowerCase() === label.toLowerCase();
+    });
+    if (duplicate) {
+      showToast(tr("toast.automailDuplicateName"));
+      return;
+    }
+    const nextTemplate = {
+      id: automailEditorDraft.id,
+      label,
+      to,
+      subject,
+      body,
+    };
+    let templates = getAutomailTemplates();
+    const idx = templates.findIndex(t => t.id === automailEditorDraft.id);
+    if (idx >= 0) templates[idx] = nextTemplate;
+    else templates = templates.concat([nextTemplate]);
+    setAutomailTemplates(templates);
+    closeAutomailEditorModal();
+    showToast(tr("toast.automailSaved"), "success");
+  }
+
+  function deleteAutomailEditorModal() {
+    if (!automailEditorDraft || automailEditorDraft.isNew) return;
+    const tpl = findAutomailTemplate(automailEditorDraft.id);
+    if (!tpl) return;
+    if (!confirm(tr("confirm.automailDelete", { name: tpl.label }))) return;
+    setAutomailTemplates(getAutomailTemplates().filter(t => t.id !== automailEditorDraft.id));
+    closeAutomailEditorModal();
+    showToast(tr("toast.automailDeleted"), "success");
   }
 
   function defaultFieldValues(name) {
@@ -3981,6 +4519,7 @@ window.STUNDEN_CONFIG = window.PM_DEFAULT_CONFIG;
         renderBaustelleTabs(getCurrentProject());
         renderProjectView();
       }
+      renderAutomailPanel();
       if (currentScreen === "team") {
         renderTeamFilters();
         renderTeamList();
@@ -4010,6 +4549,8 @@ window.STUNDEN_CONFIG = window.PM_DEFAULT_CONFIG;
     "btn-team-next-page": "btn.nextPage",
     "btn-copy-report": "btn.copyReport",
     "btn-copy-aufmass": "btn.copyAufmass",
+    "btn-bearbeitung-powerbi-copy": "btn.copyPowerBiLink",
+    "btn-add-automail": "btn.addAutomail",
     "btn-add-row": "btn.addRow",
     "btn-sort-date": "btn.sortDate",
     "btn-rename-project": "btn.renameProject",
@@ -4070,6 +4611,9 @@ window.STUNDEN_CONFIG = window.PM_DEFAULT_CONFIG;
       "label-project-name": "label.projectName",
       "label-bearbeiter-new": "label.bearbeiter",
       "label-bearbeitung-notes": "label.bearbeitungNotes",
+      "bearbeitung-kvs-title": "label.bearbeitungKvsUst",
+      "bearbeitung-automail-title": "label.bearbeitungAutomail",
+      "bearbeitung-automail-hint": "label.bearbeitungAutomailHint",
       "label-korrektur-notes": "label.korrekturNotes",
       "label-project-sort": "sort.label",
       "ov-label-total": "overview.total",
@@ -4115,6 +4659,8 @@ window.STUNDEN_CONFIG = window.PM_DEFAULT_CONFIG;
     applySettingsLabels();
     const ph = document.getElementById("new-project-name");
     if (ph) ph.placeholder = tr("placeholder.projectName");
+    updateBearbeitungKvsGhost();
+    applyAutomailModalLabels();
     const sortSel = document.getElementById("project-sort");
     if (sortSel) {
       sortSel.querySelectorAll("option").forEach(opt => {
@@ -4334,6 +4880,8 @@ window.STUNDEN_CONFIG = window.PM_DEFAULT_CONFIG;
     sparteManualOverride = false;
     stundenEditorOpen = true;
     costPanelOpen = true;
+    bearbeitungKvsPanelOpen = true;
+    bearbeitungAutomailPanelOpen = true;
     activeSection = "glowne";
     document.getElementById("display-project-name").textContent = p.name;
     const collapsedName = document.getElementById("display-project-name-collapsed");
@@ -4515,7 +5063,10 @@ window.STUNDEN_CONFIG = window.PM_DEFAULT_CONFIG;
       updateCostSummary();
     }
     if (sec === "bearbeitung") {
-      requestAnimationFrame(syncBearbeitungNotesHeight);
+      requestAnimationFrame(() => {
+        syncBearbeitungNotesHeight();
+        scheduleBearbeitungKvsGhostUpdate();
+      });
     }
     if (sec === "korrektur") {
       requestAnimationFrame(syncKorrekturNotesHeight);
@@ -4761,10 +5312,13 @@ window.STUNDEN_CONFIG = window.PM_DEFAULT_CONFIG;
     renderGlowneSection(b);
     renderChecklist("checklist-bearbeitung", CHECKLIST_BEARBEITUNG, b);
     renderBearbeitungNotes(b);
+    renderBearbeitungKvsField(p);
+    renderAutomailPanel();
     renderChecklist("checklist-korrektur", CHECKLIST_KORREKTUR, b);
     renderKorrekturNotes(b);
     document.getElementById("stunden-editor-wrap").classList.toggle("hidden", !stundenEditorOpen);
     document.getElementById("cost-panel-wrap").classList.toggle("hidden", !costPanelOpen);
+    syncBearbeitungPanelVisibility();
     if (stundenEditorOpen) renderStundenRows();
     if (costPanelOpen) renderCostPanel();
     updateCostSummary();
@@ -5330,6 +5884,39 @@ window.STUNDEN_CONFIG = window.PM_DEFAULT_CONFIG;
       ratesBadge.title = costPanelOpen ? tr("btn.closeRates") : tr("btn.openRates");
       ratesBadge.classList.toggle("is-expanded", costPanelOpen);
     }
+    const kvsBadge = document.getElementById("bearbeitung-kvs-badge");
+    const automailBadge = document.getElementById("bearbeitung-automail-badge");
+    if (kvsBadge) {
+      kvsBadge.textContent = bearbeitungKvsPanelOpen ? tr("label.sectionExpanded") : tr("label.sectionCollapsed");
+      kvsBadge.title = bearbeitungKvsPanelOpen ? tr("btn.closeKvsPanel") : tr("btn.openKvsPanel");
+      kvsBadge.classList.toggle("is-expanded", bearbeitungKvsPanelOpen);
+    }
+    if (automailBadge) {
+      automailBadge.textContent = bearbeitungAutomailPanelOpen ? tr("label.sectionExpanded") : tr("label.sectionCollapsed");
+      automailBadge.title = bearbeitungAutomailPanelOpen ? tr("btn.closeAutomailPanel") : tr("btn.openAutomailPanel");
+      automailBadge.classList.toggle("is-expanded", bearbeitungAutomailPanelOpen);
+    }
+  }
+
+  function syncBearbeitungPanelVisibility() {
+    const kvsBody = document.getElementById("bearbeitung-kvs-body");
+    const automailBody = document.getElementById("bearbeitung-automail-body");
+    if (kvsBody) kvsBody.classList.toggle("hidden", !bearbeitungKvsPanelOpen);
+    if (automailBody) automailBody.classList.toggle("hidden", !bearbeitungAutomailPanelOpen);
+    document.querySelector(".bearbeitung-kvs-block")?.classList.toggle("is-section-collapsed", !bearbeitungKvsPanelOpen);
+    document.querySelector(".bearbeitung-automail-block")?.classList.toggle("is-section-collapsed", !bearbeitungAutomailPanelOpen);
+  }
+
+  function toggleBearbeitungKvsPanel() {
+    bearbeitungKvsPanelOpen = !bearbeitungKvsPanelOpen;
+    syncBearbeitungPanelVisibility();
+    updateAbrechnungSectionBadges();
+  }
+
+  function toggleBearbeitungAutomailPanel() {
+    bearbeitungAutomailPanelOpen = !bearbeitungAutomailPanelOpen;
+    syncBearbeitungPanelVisibility();
+    updateAbrechnungSectionBadges();
   }
 
   function toggleStundenEditor() {
@@ -5444,6 +6031,7 @@ window.STUNDEN_CONFIG = window.PM_DEFAULT_CONFIG;
     appConfig = migrateConfig(raw);
     saveState();
     normalizeAllProjectsStundenRows();
+    renderAutomailPanel();
     const bearbInput = document.getElementById("new-bearbeiter");
     if (bearbInput && !bearbInput.value.trim()) bearbInput.value = getDefaultBearbeiter();
     if (stundenEditorOpen && currentProjectId) renderStundenRows();
@@ -5787,6 +6375,7 @@ window.STUNDEN_CONFIG = window.PM_DEFAULT_CONFIG;
       if (teamSel) teamSel.value = teamSortMode;
     }
     renderProjectList();
+    renderAutomailPanel();
     showScreen("start");
 
     document.getElementById("lang-select").addEventListener("change", e => applyLanguage(e.target.value, true));
@@ -5877,9 +6466,38 @@ window.STUNDEN_CONFIG = window.PM_DEFAULT_CONFIG;
 
     document.getElementById("abrechnung-stunden-badge")?.addEventListener("click", toggleStundenEditor);
     document.getElementById("abrechnung-rates-badge")?.addEventListener("click", toggleRatesPanel);
+    document.getElementById("bearbeitung-kvs-badge")?.addEventListener("click", toggleBearbeitungKvsPanel);
+    document.getElementById("bearbeitung-automail-badge")?.addEventListener("click", toggleBearbeitungAutomailPanel);
     document.getElementById("btn-copy-report").addEventListener("click", copyReport);
     document.getElementById("btn-copy-hours-summary").addEventListener("click", copyHoursSummary);
     document.getElementById("btn-copy-aufmass").addEventListener("click", copyAufmass);
+    document.getElementById("btn-bearbeitung-powerbi-copy").addEventListener("click", copyBearbeitungPowerBiLink);
+    document.getElementById("bearbeitung-kvs-ust")?.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        copyBearbeitungPowerBiLink();
+      }
+    });
+    document.getElementById("btn-add-automail")?.addEventListener("click", openAutomailNameModal);
+    document.getElementById("btn-automail-name-next")?.addEventListener("click", confirmAutomailNameModal);
+    document.getElementById("btn-automail-name-cancel")?.addEventListener("click", closeAutomailNameModal);
+    document.getElementById("btn-automail-name-close")?.addEventListener("click", closeAutomailNameModal);
+    document.getElementById("btn-automail-save")?.addEventListener("click", saveAutomailEditorModal);
+    document.getElementById("btn-automail-editor-cancel")?.addEventListener("click", closeAutomailEditorModal);
+    document.getElementById("btn-automail-editor-close")?.addEventListener("click", closeAutomailEditorModal);
+    document.getElementById("btn-automail-delete")?.addEventListener("click", deleteAutomailEditorModal);
+    document.getElementById("automail-name-input")?.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        confirmAutomailNameModal();
+      }
+    });
+    document.getElementById("automail-name-overlay")?.addEventListener("click", e => {
+      if (e.target.id === "automail-name-overlay") closeAutomailNameModal();
+    });
+    document.getElementById("automail-editor-overlay")?.addEventListener("click", e => {
+      if (e.target.id === "automail-editor-overlay") closeAutomailEditorModal();
+    });
     document.getElementById("btn-add-row").addEventListener("click", addStundenRow);
     document.getElementById("btn-sort-date").addEventListener("click", sortStundenByDate);
 
@@ -5907,6 +6525,7 @@ window.STUNDEN_CONFIG = window.PM_DEFAULT_CONFIG;
     window.addEventListener("resize", () => {
       syncBearbeitungNotesHeight();
       syncKorrekturNotesHeight();
+      updateBearbeitungKvsGhost();
     });
   }
 
